@@ -129,9 +129,9 @@
         },
         "NodegroupName": "ng-e432b860",
         "ScalingConfig": {
-          "DesiredSize": 2,
-          "MaxSize": 2,
-          "MinSize": 2
+          "DesiredSize": 1,
+          "MaxSize": 1,
+          "MinSize": 1
         },
         "Subnets": {
           "Fn::Split": [
