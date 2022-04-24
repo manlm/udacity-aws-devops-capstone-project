@@ -89,7 +89,7 @@ jobs:
       - run:
           name: Update pod label with the pipeline id
           command: |
-            kubectl label pods --all pipeline=${CIRCLE_WORKFLOW_ID:0:7}
+            kubectl label pods --all pipeline=${CIRCLE_WORKFLOW_ID:0:7} --overwrite
 
 workflows:
   default:
