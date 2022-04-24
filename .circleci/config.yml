@@ -30,7 +30,7 @@ jobs:
             . venv/bin/activate
             make install
             wget -O /bin/hadolint https://github.com/hadolint/hadolint/releases/download/v1.16.3/hadolint-Linux-x86_64 &&\
-            chmod +x /bin/hadolint
+            sudo chmod +x /bin/hadolint
 
       - save_cache:
           paths:
@@ -44,8 +44,7 @@ jobs:
             make lint
 
   build-image:
-    docker:
-      - image: circleci/buildpack-deps:stretch
+    executor: docker-python-executor
     steps:
       - checkout
       - setup_remote_docker
