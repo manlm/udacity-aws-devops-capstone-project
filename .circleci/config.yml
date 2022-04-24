@@ -83,11 +83,13 @@ jobs:
 
       - run:
           name: Get kubeconfig
-          command: aws eks update-kubeconfig --name capstone-cluster
-
-      - run:
-          name: Rollout the latest image
-          command: kubectl rollout restart deployment.apps/demo-app-deployment
+          command: |
+            aws eks update-kubeconfig --name capstone-cluster
+            kubectl rollout restart deployment.apps/demo-app-deployment
+#
+#      - run:
+#          name: Rollout the latest image
+#          command: kubectl rollout restart deployment.apps/demo-app-deployment
 
       - run:
           name: Tag the nodegroup instance with the pipeline id
