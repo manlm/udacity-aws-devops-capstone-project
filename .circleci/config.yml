@@ -62,6 +62,38 @@ jobs:
             chmod +x ./docker/push.sh
             ./docker/push.sh
 
+  deploy--image:
+    executor: docker-python-executor
+    steps:
+      - run:
+          name: Install kubectl
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y apt-transport-https ca-certificates curl
+            sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+            echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+            sudo apt-get update
+            sudo apt-get install -y kubectl
+
+      - run:
+          name: Install AWS Command Line Interface package
+          command: |
+            pip install awscli
+
+      - run:
+          name: Get kubeconfig
+          command: aws eks update-kubeconfig --name capstone-cluster
+
+      - run:
+          name: Rollout the latest image
+          command: kubectl rollout restart deployment.apps/demo-app-deployment
+
+      - run:
+          name: Tag the nodegroup instance with the pipeline id
+          command: |
+            InstanceId=$(aws ec2 describe-instances --query "Reservations[?Instances[?KeyName=='capstone-cluster']]" | jq -r ".[].Instances[].InstanceId")
+            aws ec2 create-tags --resources $InstanceId --tags Key=Name,Value="${CIRCLE_WORKFLOW_ID:0:7}"
+
 workflows:
   default:
     jobs:
