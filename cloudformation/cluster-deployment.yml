@@ -30,19 +30,19 @@ Resources:
     Properties:
       KubernetesNetworkConfig:
         IpFamily: ipv4
-      Name: eksctl-demo
+      Name: capstone-cluster
       ResourcesVpcConfig:
         EndpointPrivateAccess: false
         EndpointPublicAccess: true
         SecurityGroupIds:
           - !Ref ControlPlaneSecurityGroup
         SubnetIds:
-          - !Ref SubnetPublicUSWEST2B
+          - !Ref SubnetPublicUSWEST2C
           - !Ref SubnetPublicUSWEST2A
           - !Ref SubnetPublicUSWEST2D
-          - !Ref SubnetPrivateUSWEST2B
           - !Ref SubnetPrivateUSWEST2A
           - !Ref SubnetPrivateUSWEST2D
+          - !Ref SubnetPrivateUSWEST2C
       RoleArn: !GetAtt
         - ServiceRole
         - Arn
@@ -103,7 +103,7 @@ Resources:
       AllocationId: !GetAtt
         - NATIP
         - AllocationId
-      SubnetId: !Ref SubnetPublicUSWEST2B
+      SubnetId: !Ref SubnetPublicUSWEST2A
       Tags:
         - Key: Name
           Value: !Sub '${AWS::StackName}/NATGateway'
@@ -120,12 +120,12 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       NatGatewayId: !Ref NATGateway
       RouteTableId: !Ref PrivateRouteTableUSWEST2A
-  NATPrivateSubnetRouteUSWEST2B:
+  NATPrivateSubnetRouteUSWEST2C:
     Type: 'AWS::EC2::Route'
     Properties:
       DestinationCidrBlock: 0.0.0.0/0
       NatGatewayId: !Ref NATGateway
-      RouteTableId: !Ref PrivateRouteTableUSWEST2B
+      RouteTableId: !Ref PrivateRouteTableUSWEST2C
   NATPrivateSubnetRouteUSWEST2D:
     Type: 'AWS::EC2::Route'
     Properties:
@@ -167,12 +167,12 @@ Resources:
         - Key: Name
           Value: !Sub '${AWS::StackName}/PrivateRouteTableUSWEST2A'
       VpcId: !Ref VPC
-  PrivateRouteTableUSWEST2B:
+  PrivateRouteTableUSWEST2C:
     Type: 'AWS::EC2::RouteTable'
     Properties:
       Tags:
         - Key: Name
-          Value: !Sub '${AWS::StackName}/PrivateRouteTableUSWEST2B'
+          Value: !Sub '${AWS::StackName}/PrivateRouteTableUSWEST2C'
       VpcId: !Ref VPC
   PrivateRouteTableUSWEST2D:
     Type: 'AWS::EC2::RouteTable'
@@ -201,11 +201,11 @@ Resources:
     Properties:
       RouteTableId: !Ref PrivateRouteTableUSWEST2A
       SubnetId: !Ref SubnetPrivateUSWEST2A
-  RouteTableAssociationPrivateUSWEST2B:
+  RouteTableAssociationPrivateUSWEST2C:
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
-      RouteTableId: !Ref PrivateRouteTableUSWEST2B
-      SubnetId: !Ref SubnetPrivateUSWEST2B
+      RouteTableId: !Ref PrivateRouteTableUSWEST2C
+      SubnetId: !Ref SubnetPrivateUSWEST2C
   RouteTableAssociationPrivateUSWEST2D:
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
@@ -216,11 +216,11 @@ Resources:
     Properties:
       RouteTableId: !Ref PublicRouteTable
       SubnetId: !Ref SubnetPublicUSWEST2A
-  RouteTableAssociationPublicUSWEST2B:
+  RouteTableAssociationPublicUSWEST2C:
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
       RouteTableId: !Ref PublicRouteTable
-      SubnetId: !Ref SubnetPublicUSWEST2B
+      SubnetId: !Ref SubnetPublicUSWEST2C
   RouteTableAssociationPublicUSWEST2D:
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
@@ -251,29 +251,29 @@ Resources:
     Type: 'AWS::EC2::Subnet'
     Properties:
       AvailabilityZone: us-west-2a
-      CidrBlock: 192.168.128.0/19
+      CidrBlock: 192.168.96.0/19
       Tags:
         - Key: kubernetes.io/role/internal-elb
           Value: '1'
         - Key: Name
           Value: !Sub '${AWS::StackName}/SubnetPrivateUSWEST2A'
       VpcId: !Ref VPC
-  SubnetPrivateUSWEST2B:
+  SubnetPrivateUSWEST2C:
     Type: 'AWS::EC2::Subnet'
     Properties:
-      AvailabilityZone: us-west-2b
-      CidrBlock: 192.168.96.0/19
+      AvailabilityZone: us-west-2c
+      CidrBlock: 192.168.160.0/19
       Tags:
         - Key: kubernetes.io/role/internal-elb
           Value: '1'
         - Key: Name
-          Value: !Sub '${AWS::StackName}/SubnetPrivateUSWEST2B'
+          Value: !Sub '${AWS::StackName}/SubnetPrivateUSWEST2C'
       VpcId: !Ref VPC
   SubnetPrivateUSWEST2D:
     Type: 'AWS::EC2::Subnet'
     Properties:
       AvailabilityZone: us-west-2d
-      CidrBlock: 192.168.160.0/19
+      CidrBlock: 192.168.128.0/19
       Tags:
         - Key: kubernetes.io/role/internal-elb
           Value: '1'
@@ -284,7 +284,7 @@ Resources:
     Type: 'AWS::EC2::Subnet'
     Properties:
       AvailabilityZone: us-west-2a
-      CidrBlock: 192.168.32.0/19
+      CidrBlock: 192.168.0.0/19
       MapPublicIpOnLaunch: true
       Tags:
         - Key: kubernetes.io/role/elb
@@ -292,23 +292,23 @@ Resources:
         - Key: Name
           Value: !Sub '${AWS::StackName}/SubnetPublicUSWEST2A'
       VpcId: !Ref VPC
-  SubnetPublicUSWEST2B:
+  SubnetPublicUSWEST2C:
     Type: 'AWS::EC2::Subnet'
     Properties:
-      AvailabilityZone: us-west-2b
-      CidrBlock: 192.168.0.0/19
+      AvailabilityZone: us-west-2c
+      CidrBlock: 192.168.64.0/19
       MapPublicIpOnLaunch: true
       Tags:
         - Key: kubernetes.io/role/elb
           Value: '1'
         - Key: Name
-          Value: !Sub '${AWS::StackName}/SubnetPublicUSWEST2B'
+          Value: !Sub '${AWS::StackName}/SubnetPublicUSWEST2C'
       VpcId: !Ref VPC
   SubnetPublicUSWEST2D:
     Type: 'AWS::EC2::Subnet'
     Properties:
       AvailabilityZone: us-west-2d
-      CidrBlock: 192.168.64.0/19
+      CidrBlock: 192.168.32.0/19
       MapPublicIpOnLaunch: true
       Tags:
         - Key: kubernetes.io/role/elb
@@ -374,15 +374,15 @@ Outputs:
   SubnetsPrivate:
     Value: !Join
       - ','
-      - - !Ref SubnetPrivateUSWEST2B
-        - !Ref SubnetPrivateUSWEST2A
+      - - !Ref SubnetPrivateUSWEST2A
         - !Ref SubnetPrivateUSWEST2D
+        - !Ref SubnetPrivateUSWEST2C
     Export:
       Name: !Sub '${AWS::StackName}::SubnetsPrivate'
   SubnetsPublic:
     Value: !Join
       - ','
-      - - !Ref SubnetPublicUSWEST2B
+      - - !Ref SubnetPublicUSWEST2C
         - !Ref SubnetPublicUSWEST2A
         - !Ref SubnetPublicUSWEST2D
     Export:
