@@ -62,7 +62,7 @@ jobs:
             chmod +x ./docker/push.sh
             ./docker/push.sh
 
-  deploy--image:
+  deploy-image:
     executor: docker-python-executor
     steps:
       - run:
@@ -100,3 +100,5 @@ workflows:
       - lint
       - build-image:
           requires: [ lint ]
+      - deploy-image:
+          requires: [ build-image ]
