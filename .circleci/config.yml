@@ -4,11 +4,6 @@
 #
 version: 2.1
 
-executors:
-  docker-python-executor:
-    docker:
-      - image: cimg/python:3.7
-
 jobs:
   lint:
     docker:
@@ -64,7 +59,8 @@ jobs:
             ./docker/push.sh
 
   deploy-image:
-    executor: docker-python-executor
+    docker:
+      - image: cimg/python:3.7
     steps:
       - run:
           name: Install kubectl
@@ -85,11 +81,10 @@ jobs:
           name: Get kubeconfig
           command: |
             aws eks update-kubeconfig --name capstone-cluster
-            kubectl rollout restart deployment.apps/demo-app-deployment
-#
-#      - run:
-#          name: Rollout the latest image
-#          command: kubectl rollout restart deployment.apps/demo-app-deployment
+
+      - run:
+          name: Rollout the latest image
+          command: kubectl rollout restart deployment.apps/demo-app-deployment
 
       - run:
           name: Tag the nodegroup instance with the pipeline id
