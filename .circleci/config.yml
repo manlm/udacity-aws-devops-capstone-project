@@ -53,13 +53,13 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            chmod +x ./scripts/docker/build.sh
+            chmod +x ./docker/build.sh
             ./docker/build.sh
 
       - run:
           name: Publish Docker Image to Docker Hub
           command: |
-            chmod +x ./scripts/docker/push.sh
+            chmod +x ./docker/push.sh
             ./docker/push.sh
 
 workflows:
