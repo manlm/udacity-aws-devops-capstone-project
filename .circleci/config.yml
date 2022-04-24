@@ -66,5 +66,5 @@ workflows:
   default:
     jobs:
       - lint
-      - build-docker:
+      - build-image:
           requires: [ lint ]
