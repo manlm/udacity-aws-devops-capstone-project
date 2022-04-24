@@ -87,10 +87,9 @@ jobs:
           command: kubectl rollout restart deployment.apps/demo-app-deployment
 
       - run:
-          name: Tag the nodegroup instance with the pipeline id
+          name: Update pod label with the pipeline id
           command: |
-            InstanceId=$(aws ec2 describe-instances --query "Reservations[?Instances[?KeyName=='eksctl-capstone-cluster']]" | jq -r ".[].Instances[].InstanceId")
-            aws ec2 create-tags --resources $InstanceId --tags Key=Name,Value="${CIRCLE_WORKFLOW_ID:0:7}"
+            kubectl label pods --all pipeline=${CIRCLE_WORKFLOW_ID:0:7}
 
 workflows:
   default:
